@@ -52,6 +52,17 @@ class CourseList(Resource):
         
         return course.to_dict(), 201
 
+@ns.route('/<string:course_id>')
+class CourseDetail(Resource):
+    @jwt_required()
+    def get(self, course_id):
+        """获取单个课程详情"""
+        course = Course.query.get(course_id)
+        if not course:
+            return {'message': '课程不存在'}, 404
+
+        return course.to_dict(), 200
+
 @ns.route('/<string:course_id>/join')
 class JoinCourse(Resource):
     @jwt_required()

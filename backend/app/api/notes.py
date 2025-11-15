@@ -32,9 +32,60 @@ class NoteList(Resource):
             course_id=data['course_id'],
             view_id=data.get('view_id'),
             note_type=data.get('note_type', 'standard'),
+            parent_note_id=data.get('parent_note_id'),
             tags=data.get('tags', [])
         )
         db.session.add(note)
         db.session.commit()
-        
+
         return note.to_dict(), 201
+
+@ns.route('/<string:note_id>')
+class NoteDetail(Resource):
+    @jwt_required()
+    def get(self, note_id):
+        """获取单个笔记"""
+        note = Note.query.get(note_id)
+        if not note:
+            return {'message': '笔记不存在'}, 404
+
+        return note.to_dict(), 200
+
+    @jwt_required()
+    def put(self, note_id):
+        """更新笔记"""
+        user_id = get_jwt_identity()
+        note = Note.query.get(note_id)
+
+        if not note:
+            return {'message': '笔记不存在'}, 404
+
+        if note.author_id != user_id:
+            return {'message': '无权修改此笔记'}, 403
+
+        data = request.get_json()
+        if 'title' in data:
+            note.title = data['title']
+        if 'content' in data:
+            note.content = data['content']
+        if 'tags' in data:
+            note.tags = data['tags']
+
+        db.session.commit()
+        return note.to_dict(), 200
+
+    @jwt_required()
+    def delete(self, note_id):
+        """删除笔记"""
+        user_id = get_jwt_identity()
+        note = Note.query.get(note_id)
+
+        if not note:
+            return {'message': '笔记不存在'}, 404
+
+        if note.author_id != user_id:
+            return {'message': '无权删除此笔记'}, 403
+
+        db.session.delete(note)
+        db.session.commit()
+        return {'message': '删除成功'}, 200

@@ -108,15 +108,24 @@ export default function StudentCoursesPage() {
                   <span>📚 {course.note_count} 笔记</span>
                   <span>👥 {course.member_count} 成员</span>
                 </div>
-                <Button
-                  className="w-full"
-                  onClick={() => {
-                    setSelectedCourse(course)
-                    setShowJoinDialog(true)
-                  }}
-                >
-                  加入课程
-                </Button>
+                <div className="flex gap-2">
+                  <Button
+                    className="flex-1"
+                    variant="outline"
+                    onClick={() => router.push(`/student/courses/${course.id}/workspace`)}
+                  >
+                    进入课程
+                  </Button>
+                  <Button
+                    className="flex-1"
+                    onClick={() => {
+                      setSelectedCourse(course)
+                      setShowJoinDialog(true)
+                    }}
+                  >
+                    加入课程
+                  </Button>
+                </div>
               </CardContent>
             </Card>
           ))}

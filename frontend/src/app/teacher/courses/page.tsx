@@ -118,7 +118,11 @@ export default function TeacherCoursesPage() {
                   <span>📚 {course.note_count} 笔记</span>
                   <span>👥 {course.member_count} 成员</span>
                 </div>
-                <Button className="w-full" variant="outline">
+                <Button
+                  className="w-full"
+                  variant="outline"
+                  onClick={() => router.push(`/student/courses/${course.id}/workspace`)}
+                >
                   进入课程
                 </Button>
               </CardContent>
